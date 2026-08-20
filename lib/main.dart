@@ -7,39 +7,37 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Student Profile',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
       home: const StudentProfile(title: 'My Student Profile'),
     );
   }
 }
 
-class StudentProfile extends StatelessWidget {
+class StudentProfile extends StatefulWidget {
   const StudentProfile({super.key, required this.title});
- 
+
   final String title;
- 
+
+  @override
+  State<StudentProfile> createState() => _StudentProfileState();
+}
+
+class _StudentProfileState extends State<StudentProfile> {
+  // ShowLink
+  String _currentLink = 'https://github.com/kurtlvc';
+
+  void _updateLink(String newLink) {
+    setState(() {
+      _currentLink = newLink;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,24 +47,27 @@ class StudentProfile extends StatelessWidget {
           children: [
             const Icon(Icons.person),
             const SizedBox(width: 8),
-            Text(title),
+            Text(widget.title),
           ],
         ),
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              ProfileHeader(),
-              ActionButtons(),
-              SizedBox(height: 16),
-              PersonalInfoCard(),
-              SizedBox(height: 16),
-              AcademicInfoCard(),
-              SizedBox(height: 16),
-              SkillsCard(),
-              SizedBox(height: 16),
+              const ProfileHeader(),
+              const SizedBox(height: 16),
+              ActionButtons(onLinkSelected: _updateLink),
+              const SizedBox(height: 16),
+              ShowLink(link: _currentLink),
+              const SizedBox(height: 16),
+              const PersonalInfoCard(),
+              const SizedBox(height: 16),
+              const EnrollmentInfo(),
+              const SizedBox(height: 16),
+              const AcademicInfo(),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -74,11 +75,11 @@ class StudentProfile extends StatelessWidget {
     );
   }
 }
- 
-// Top section: picture + name + nickname
+
+// Profile Picture + Full Name + Nickname
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -88,7 +89,7 @@ class ProfileHeader extends StatelessWidget {
           children: [
             const CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage('images/IMG600.png'),
+              backgroundImage: AssetImage('assets/profile.jpeg'),
             ),
             const SizedBox(height: 12),
             const Text(
@@ -106,11 +107,11 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 }
- 
-// Personal info: age, birthday, address, hobby, motto
+
+// Age + Birthday + Address + Hobby + Motto + Course/Program + Year Level
 class PersonalInfoCard extends StatelessWidget {
   const PersonalInfoCard({super.key});
- 
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -150,11 +151,11 @@ class PersonalInfoCard extends StatelessWidget {
     );
   }
 }
- 
-// Academic info: course, year level, section
-class AcademicInfoCard extends StatelessWidget {
-  const AcademicInfoCard({super.key});
- 
+
+// Information
+class EnrollmentInfo extends StatelessWidget {
+  const EnrollmentInfo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -182,11 +183,11 @@ class AcademicInfoCard extends StatelessWidget {
     );
   }
 }
- 
-// Skills: favorite subject, programming language, technical skill
-class SkillsCard extends StatelessWidget {
-  const SkillsCard({super.key});
- 
+
+// Academic Information
+class AcademicInfo extends StatelessWidget {
+  const AcademicInfo({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -214,11 +215,13 @@ class SkillsCard extends StatelessWidget {
     );
   }
 }
- 
-// Bottom buttons row
+
+// Button Links
 class ActionButtons extends StatelessWidget {
-  const ActionButtons({super.key});
- 
+  const ActionButtons({super.key, required this.onLinkSelected});
+
+  final ValueChanged<String> onLinkSelected;
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -226,30 +229,39 @@ class ActionButtons extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () {
-            debugPrint('GitHub pressed');
+            onLinkSelected('https://github.com/kurtlvc');
           },
           child: const Text('GitHub'),
         ),
         TextButton(
           onPressed: () {
-            debugPrint('Website pressed');
+            onLinkSelected('https://kurtlvc.github.io/');
           },
           child: const Text('Website'),
         ),
         TextButton(
           onPressed: () {
-            debugPrint('Facebook pressed');
+            onLinkSelected('https://www.facebook.com/me/');
           },
           child: const Text('Facebook'),
         ),
-        const SizedBox(width: 12),
-        TextButton(
-          onPressed: () {
-            debugPrint('Share pressed');
-          },
-          child: const Text('Share'),
-        ),
       ],
+    );
+  }
+}
+
+// Widget that changes when buttons are pressed
+class ShowLink extends StatelessWidget {
+  final String link;
+  const ShowLink({super.key, required this.link});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        debugPrint('$link pressed');
+      },
+      child: Text(link),
     );
   }
 }
